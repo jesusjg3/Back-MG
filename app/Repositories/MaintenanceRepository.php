@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Models\Maintenance;
+use App\Models\Vehicle;
 use Illuminate\Support\Facades\DB;
 
 class MaintenanceRepository
@@ -33,6 +34,11 @@ class MaintenanceRepository
                 'observaciones' => $data['observaciones'] ?? null,
             ]);
 
+            // Actualizar kilometraje del vehículo con el nuevo registro
+            if (isset($data['kilometraje']) && isset($data['vehicle_id'])) {
+                Vehicle::where('id', $data['vehicle_id'])->update(['kilometraje' => $data['kilometraje']]);
+            }
+
             // 2. Persistir relación con Partes (Pivot)
             if (!empty($data['parts'])) {
                 foreach ($data['parts'] as $part) {
@@ -60,6 +66,11 @@ class MaintenanceRepository
     {
         $maintenance = Maintenance::findOrFail($id);
         $maintenance->update($data);
+
+        // Actualizar kilometraje del vehículo también en caso de edición
+        if (isset($data['kilometraje'])) {
+            Vehicle::where('id', $maintenance->vehicle_id)->update(['kilometraje' => $data['kilometraje']]);
+        }
 
         if (isset($data['parts'])) {
             $formattedParts = [];
