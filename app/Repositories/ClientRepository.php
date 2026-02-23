@@ -13,7 +13,11 @@ class ClientRepository
 
     public function getById($id)
     {
-        return Client::with('vehicles.maintenances')->findOrFail($id);
+        return Client::with([
+            'vehicles' => function ($q) {
+                $q->withTrashed()->with('maintenances');
+            }
+        ])->findOrFail($id);
     }
 
     public function create(array $data)

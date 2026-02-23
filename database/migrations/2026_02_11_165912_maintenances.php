@@ -12,7 +12,7 @@ return new class extends Migration {
     {
         Schema::create('maintenances', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('vehicle_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('vehicle_id')->nullable()->constrained()->nullOnDelete();
             $table->unsignedInteger('kilometraje'); // Unsigned porque no hay km negativos
             $table->unsignedInteger('prox_kilometraje')->nullable();
             $table->date('fecha');

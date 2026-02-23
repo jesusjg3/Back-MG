@@ -18,6 +18,7 @@ return new class extends Migration {
             $table->integer('year')->nullable();
             $table->string('plate');
             $table->integer('kilometraje');
+            $table->softDeletes();
             $table->timestamps();
         });
     }

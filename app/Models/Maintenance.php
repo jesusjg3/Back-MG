@@ -32,13 +32,15 @@ class Maintenance extends Model
     {
         return $this->belongsToMany(Part::class, 'maintenance_part')
             ->withPivot('quantity', 'price_at_time')
-            ->withTimestamps();
+            ->withTimestamps()
+            ->withTrashed();
     }
 
     public function labors()
     {
         return $this->belongsToMany(Labor::class, 'maintenance_labor')
             ->withPivot('cost_at_time')
-            ->withTimestamps();
+            ->withTimestamps()
+            ->withTrashed();
     }
 }
