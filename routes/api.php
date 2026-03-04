@@ -6,6 +6,7 @@ use App\Http\Controllers\VehicleController;
 use App\Http\Controllers\MaintenanceController;
 use App\Http\Controllers\PartController;
 use App\Http\Controllers\LaborController;
+use App\Http\Controllers\ReportController;
 
 /*
 |--------------------------------------------------------------------------
@@ -35,5 +36,8 @@ Route::prefix('v1')->group(function () {
 
     // Labor (Mano de Obra)
     Route::apiResource('labors', LaborController::class);
+
+    // Reports (Resúmenes de Ingresos)
+    Route::get('reports/weekly-revenue', [ReportController::class, 'getWeeklyRevenue']);
 
 });
