@@ -10,12 +10,24 @@ class MaintenanceRepository
 {
     public function getAll()
     {
-        return Maintenance::with(['vehicle.client', 'parts', 'labors'])->get();
+        return Maintenance::with([
+            'vehicle' => function ($query) {
+                $query->withTrashed()->with('client');
+            }, 
+            'parts', 
+            'labors'
+        ])->get();
     }
 
     public function getById($id)
     {
-        return Maintenance::with(['vehicle.client', 'parts', 'labors'])->findOrFail($id);
+        return Maintenance::with([
+            'vehicle' => function ($query) {
+                $query->withTrashed()->with('client');
+            }, 
+            'parts', 
+            'labors'
+        ])->findOrFail($id);
     }
 
     /**

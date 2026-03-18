@@ -25,7 +25,9 @@ class VehicleRequest extends FormRequest
                 'required',
                 'string',
                 'max:20',
-                Rule::unique('vehicles', 'plate')->ignore($vehicleId)
+                Rule::unique('vehicles', 'plate')
+                    ->ignore($vehicleId)
+                    ->whereNull('deleted_at')
             ],
             'kilometraje' => 'required|integer|min:0',
         ];
