@@ -16,21 +16,27 @@ class ReportController extends Controller
     }
 
     /**
-     * Get the weekly revenue summary.
+     * Get the revenue summary (weekly or daily).
      * 
-     * @param Request $request Expects ?year=YYYY&month=MM
+     * @param Request $request Expects ?year=YYYY&month=MM&mode=daily|weekly
      * @return JsonResponse
      */
-    public function getWeeklyRevenue(Request $request): JsonResponse
+    public function getRevenue(Request $request): JsonResponse
     {
         $year = $request->query('year', date('Y'));
         $month = $request->query('month', date('m'));
+        $mode = $request->query('mode', 'weekly');
 
-        $summary = $this->reportService->getWeeklyRevenue((int) $year, (int) $month);
+        if ($mode === 'daily') {
+            $summary = $this->reportService->getDailyRevenue((int) $year, (int) $month);
+        } else {
+            $summary = $this->reportService->getWeeklyRevenue((int) $year, (int) $month);
+        }
 
         return response()->json([
             'year' => $year,
             'month' => $month,
+            'mode' => $mode,
             'data' => $summary,
         ]);
     }

@@ -38,6 +38,6 @@ Route::prefix('v1')->group(function () {
     Route::apiResource('labors', LaborController::class);
 
     // Reports (Resúmenes de Ingresos)
-    Route::get('reports/weekly-revenue', [ReportController::class, 'getWeeklyRevenue']);
-
+    Route::get('reports/revenue', [ReportController::class, 'getRevenue']);
+    Route::get('reports/weekly-revenue', [ReportController::class, 'getRevenue']); // keep for backwards compat temporarily
 });

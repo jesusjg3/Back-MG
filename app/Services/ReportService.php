@@ -36,8 +36,8 @@ class ReportService
 
             if (!isset($weeklyData[$weekLabel])) {
                 $weeklyData[$weekLabel] = [
-                    'week_label' => $weekLabel,
-                    'week_number' => $fecha->weekOfMonth,
+                    'label' => $weekLabel,
+                    'sort_number' => $fecha->weekOfMonth,
                     'total_labor' => 0,
                     'total_parts' => 0,
                     'total_revenue' => 0,
@@ -59,7 +59,48 @@ class ReportService
 
         $result = array_values($weeklyData);
         usort($result, function ($a, $b) {
-            return $a['week_number'] <=> $b['week_number'];
+            return $a['sort_number'] <=> $b['sort_number'];
+        });
+
+        return $result;
+    }
+
+    public function getDailyRevenue(int $year, int $month): array
+    {
+        $maintenances = $this->reportRepository->getMaintenancesByMonth($year, $month);
+
+        $dailyData = [];
+
+        foreach ($maintenances as $maintenance) {
+            $fecha = Carbon::parse($maintenance->fecha);
+            $dayLabel = $fecha->format('d/m/Y');
+
+            if (!isset($dailyData[$dayLabel])) {
+                $dailyData[$dayLabel] = [
+                    'label' => $dayLabel,
+                    'sort_number' => $fecha->day,
+                    'total_labor' => 0,
+                    'total_parts' => 0,
+                    'total_revenue' => 0,
+                ];
+            }
+
+            $laborCost = $maintenance->labors->sum(function ($labor) {
+                return $labor->pivot->cost_at_time;
+            });
+
+            $partsCost = $maintenance->parts->sum(function ($part) {
+                return $part->pivot->quantity * $part->pivot->price_at_time;
+            });
+
+            $dailyData[$dayLabel]['total_labor'] += $laborCost;
+            $dailyData[$dayLabel]['total_parts'] += $partsCost;
+            $dailyData[$dayLabel]['total_revenue'] += ($laborCost + $partsCost);
+        }
+
+        $result = array_values($dailyData);
+        usort($result, function ($a, $b) {
+            return $a['sort_number'] <=> $b['sort_number'];
         });
 
         return $result;
